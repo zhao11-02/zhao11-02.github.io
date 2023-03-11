@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .one {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: url('../images/f1712cc551d7c1626de567c5476486d2d2314fec7c75-5spjfF_fw658.webp');
+            background-size: 100%;
+        }
+
+        .one-contente {
+            padding: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            /* background: rgba(0, 0, 0, 0.35); */
+            text-align: center;
+            border-radius: 10px;
+            /* box-shadow: 0 0 20px 15px hsl(48, 100%, 20%); */
+        }
+
+        .item-title {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .time-auto-ling {
+            color: #ffffff;
+            font-size: 60px;
+        }
+
+        .down {
+            width: 150px;
+            cursor: pointer;
+            transition: all 0.35s;
+        }
+
+        .down1 {
+            width: 150px;
+            cursor: pointer;
+            transition: all 0.5s;
+        }
+
+        .auto-time>div {
+            width: 15px;
+            height: 15px;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .auto-time>div:nth-child(2) {
+            margin-top: 5px;
+        }
+
+        .btn {
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 10px 40px;
+            background: transparent;
+            /* display: none; */
+            margin: 0 auto;
+        }
+
+        .btn:hover {
+
+            background: rgb(194, 174, 209);
+        }
+
+        .auto-play {
+            background: transparent;
+            /* background: red; */
+            width: 300px;
+            margin: 0 auto;
+            margin-top: 50px;
+            display: none;
+        }
+
+        .auto-play>img {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        /* 修改按钮 */
+        #edit1 {
+            /* display: none */
+            float: left;
+        }
+
+        /* 重新播放 */
+        #kefu11 {
+            float: right;
+        }
+
+        /* 播放按钮 */
+        #bagright1 {
+            display: none;
+        }
+
+        .isShow {
+            display: block;
+        }
+
+        .isShow1 {
+            display: none;
+        }
+
+        .qp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.35s;
+            outline: none;
+            text-align: center;
+            line-height: 50px;
+        }
+
+        .qp:hover {
+
+            background: rgb(194, 174, 209);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="one">
+        <div class="one-contente">
+            <div class="item-title">
+                <div class="item-left-time">
+                    <img src="/images/down.png" title="向上调整小时" class="down" id="left-s">
+                    <h1 class="time-auto-ling" title="小时" id="left_time">00</h1>
+                    <img src="/images/down1.png" title="向下调整小时" class="down1" id="left-x">
+                    <!-- <h1 class="time-auto-ling">时</h1> -->
+                </div>
+                <div class="auto-time">
+                    <div></div>
+                    <div></div>
+                </div>
+                <div class="item-right-time">
+                    <img src="/images/down.png" title="向上调整分钟" class="down" id="right-s">
+                    <h1 class="time-auto-ling" title="分钟" id="right_time">00</h1>
+                    <img src="/images/down1.png" title="向下调整分钟" class="down1" id="right-x">
+                    <!-- <h1 class="time-auto-ling">分</h1> -->
+                </div>
+            </div>
+            <div class="auto-play" id="auto_play">
+                <img src="/images/edit.png" title="修改时间" class="edit" id="edit1">
+                <img src="/images/bag-arrow-right.png" title="播放" class="bagright" id="bagright1">
+                <img src="/images/addressIcon.png" title="播放/暂停" class="address" id="address1">
+                <img src="/images/kefu1.png" title="重新播放" class="kefu1" id="kefu11">
+            </div>
+            <button class="btn">开启计时</button>
+        </div>
+        <div class="qp" id="qp1">全屏</div>
+        <div class="qp isShow1" id="qp2">退出</div>
+    </div>
+
+    <script>
+        let btn = document.querySelector('.btn') // 开启计时
+        let left_time = document.getElementById('left_time') // 左侧的时间
+        let right_time = document.getElementById('right_time') // 右侧的时间
+        let left_s = document.getElementById('left-s') // 左侧添加时间
+        let left_x = document.getElementById('left-x') // 左侧减去时间
+        let right_s = document.getElementById('right-s') // 右侧添加按钮
+        let right_x = document.getElementById('right-x') // 右侧减去按钮
+        let time = '' // 定时器变量
+        let auto_play = document.getElementById('auto_play') // 编辑窗口
+        let edit1 = document.getElementById('edit1') // 修改时间
+        let bagright1 = document.getElementById('bagright1') //播放
+        let address1 = document.getElementById('address1') //暂停
+        let kefu11 = document.getElementById('kefu11') // 重新播放
+        let qp1 = document.getElementById('qp1') // 全屏
+        let qp2 = document.getElementById('qp2') // 退出
+        let number = '0'  // 播放暂停变量
+        let starteLeft = 0  // 记录倒计时前的时值
+        let starteRight = 0 // 记录倒计时前的分钟
+        let streen = 0
+        let qWhith = 0 // 全屏状态下的宽度
+        let qhitn = 0 // 全屏状态下的高度
+        let zwhich = 0  // 正常状态下的宽度
+        let zHight = 0 // 正常状态下的高度
+
+        // 倒计时是否到了0秒
+        function timeOut() {
+            if (left_time.innerHTML * 1 == 0 && right_time.innerHTML * 1 == 0) {
+                clearInterval(time)
+                address1.src = '/images/bag-arrow-right.png'
+                number = '1'
+            }
+        }
+        // 补0方法
+        function timeBu(timer) {
+            let times = timer > 9 ? timer : '0' + timer
+            return times
+        }
+        // 左侧增加时间方法
+        function addTime() {
+            console.log('添加时间事件');
+            let addTime1 = left_time.innerHTML * 1 + 1
+            if (left_time.innerHTML * 1 == 59) {
+                left_time.innerHTML = timeBu(0)
+            } else {
+                left_time.innerHTML = timeBu(addTime1)
+            }
+        }
+        // 左侧增加时间
+        left_s.addEventListener('click', addTime)
+        // 左侧减去时间
+        left_x.addEventListener('click', function () {
+            console.log('减去时间事件');
+            let eventTime = left_time.innerHTML * 1 - 1
+            if (left_time.innerHTML == '00' || left_time.innerHTML * 1 == 0) {
+                left_time.innerHTML = 59
+            } else {
+                left_time.innerHTML = timeBu(eventTime)
+            }
+        })
+        // 右侧增加时间
+        right_s.addEventListener('click', function () {
+            console.log('添加时间事件');
+            let addTime = right_time.innerHTML * 1 + 1
+            if (right_time.innerHTML * 1 == 59) {
+                right_time.innerHTML = timeBu(0)
+            } else {
+                right_time.innerHTML = timeBu(addTime)
+            }
+        })
+        // 右侧减去时间
+        right_x.addEventListener('click', function () {
+            console.log('减去时间事件');
+            let eventTime = right_time.innerHTML * 1 - 1
+            if (right_time.innerHTML == '00' || right_time.innerHTML * 1 == 0) {
+                right_time.innerHTML = 59
+            } else {
+                right_time.innerHTML = timeBu(eventTime)
+            }
+        })
+        // 定时器方法
+        function timeSet() {
+            if (left_time.innerHTML == '00' && right_time.innerHTML == '00') {
+                alert('请输入时间')
+            } else {
+                starteLeft = left_time.innerHTML
+                starteRight = right_time.innerHTML
+                btn.className = 'isShow1'
+                left_s.className = 'isShow1'
+                left_x.className = 'isShow1'
+                right_s.className = 'isShow1'
+                right_x.className = 'isShow1'
+                auto_play.className = 'auto-play isShow'
+
+                time = setInterval(() => {
+                    timeOut()
+                    console.log('定时器开启了');
+                    if (left_time.innerHTML * 1 > 0) {
+                        let rightTime = right_time.innerHTML * 1 - 1
+                        if (right_time.innerHTML == '00') {
+                            rightTime = 59
+                            left_time.innerHTML = timeBu(left_time.innerHTML * 1 - 1)
+                            // setTimeout(() => {
+                            //     left_time.innerHTML = timeBu(left_time.innerHTML * 1 - 1)
+                            // }, 1000)
+                        }
+                        right_time.innerHTML = timeBu(rightTime)
+                    } else {
+                        let rightTime1 = right_time.innerHTML * 1 - 1
+                        if (right_time.innerHTML * 1 == 0) {
+                            timeOut()
+                            right_time.innerHTML = timeBu(0)
+                        } else {
+                            right_time.innerHTML = timeBu(rightTime1)
+                        }
+
+                    }
+
+                }, 1000)
+            }
+        }
+        // 开启定时器
+        btn.addEventListener('click', function () {
+            clearInterval(time)
+            timeSet()
+        })
+        // 暂停定时器
+        address1.addEventListener('click', function () {
+            if (number == '0') {
+                address1.src = '/images/bag-arrow-right.png'
+                clearInterval(time)
+                number = '1'
+            } else {
+                address1.src = '/images/addressIcon.png'
+                clearInterval(time)
+                timeSet()
+                number = '0'
+            }
+
+
+        })
+
+        // 修改时间
+        edit1.addEventListener('click', function () {
+            if (number == 1) {
+                address1.src = '/images/addressIcon.png'
+                number = '0'
+            }
+            clearInterval(time)
+            left_s.className = 'down isShow'
+            left_x.className = 'down1 isShow'
+            right_s.className = 'down isShow'
+            right_x.className = 'down1 isShow'
+            btn.className = 'btn isShow'
+            auto_play.className = 'auto-play isShow1'
+        })
+        // 重新播放
+        kefu11.addEventListener('click', function () {
+            if (number == 1) {
+                address1.src = '/images/addressIcon.png'
+                number = '0'
+            }
+            left_time.innerHTML = starteLeft
+            right_time.innerHTML = starteRight
+            clearInterval(time)
+            timeSet()
+        })
+
+        // 全屏方法
+        qp1.addEventListener('click', function () {
+            let de = document.documentElement
+            if (streen == 0) {
+                if (de.requestFullscreen) {
+                    de.requestFullscreen()
+                }
+                qp1.className = "qp isShow1"
+                qp2.className = " qp isShow"
+                streen = 1
+                qWhith = document.body.clientWidth;
+                qhitn = document.body.clientHeight;
+                console.log(qWhith, qhitn);
+            }
+        })
+
+        qp2.addEventListener('click', function () {
+            if (streen == 1) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen()
+                }
+                qp1.className = "qp isShow"
+                qp2.className = " qp isShow1"
+                streen = 0
+                zwhich = document.body.clientWidth
+                zHight = document.body.clientHeight
+                console.log(zwhich, zHight);
+            }
+
+        })
+
+        document.onkeydown = function (even) {
+            let jpCode = even.keyCode
+            console.log(jpCode);
+        }
+    </script>
+</body>
+
+</html>
